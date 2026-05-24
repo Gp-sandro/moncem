@@ -25,6 +25,9 @@ export default async function LoginPage({ searchParams }: Props) {
         ) : null}
         <SocialAuthButtons mode="login" nextPath={nextPath} />
         <AuthForm mode="login" nextPath={nextPath} />
+        <p className="auth-link-row">
+          <Link href="/forgot-password">Forgot password?</Link>
+        </p>
         <p className="muted" style={{ marginTop: 18 }}>
           New here? <Link href={`/signup?next=${encodeURIComponent(nextPath)}`}>Create an account</Link>
         </p>

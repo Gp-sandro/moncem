@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
+import { PostOwnerActions } from '@/components/PostOwnerActions';
 import { ReactionBar } from '@/components/ReactionBar';
 import { StartConversationButton } from '@/components/StartConversationButton';
 import { isUserEmailVerified } from '@/lib/auth';
@@ -41,6 +42,7 @@ export default async function PostPage({ params }: Props) {
 
   const post = await getPostBySlug(slug);
   if (!post) return notFound();
+  const isOwnPost = post.author.id === user.id;
   const activeReactions = await getActiveReactions(supabase, user.id, [post.id]);
 
   const paragraphs = (post.body ?? post.excerpt ?? '')
@@ -78,14 +80,18 @@ export default async function PostPage({ params }: Props) {
             <Link href={`/u/${post.author.username}`} className="button secondary" style={{ marginLeft: 'auto' }}>
               View profile
             </Link>
-            <StartConversationButton
-              recipientId={post.author.id}
-              recipientName={post.author.fullName}
-              recipientStatus={post.author.connectStatus}
-              contextPostId={post.id}
-              contextTitle={post.title}
-              isOwnProfile={post.author.id === user.id}
-            />
+            {isOwnPost ? (
+              <PostOwnerActions postId={post.id} postSlug={post.slug} postTitle={post.title} />
+            ) : (
+              <StartConversationButton
+                recipientId={post.author.id}
+                recipientName={post.author.fullName}
+                recipientStatus={post.author.connectStatus}
+                contextPostId={post.id}
+                contextTitle={post.title}
+                isOwnProfile={false}
+              />
+            )}
           </div>
         </section>
         <section className="panel reader-reactions">

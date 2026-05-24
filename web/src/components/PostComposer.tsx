@@ -22,25 +22,47 @@ type CreatePostResult = {
   error?: string;
 };
 
+type DeletePostResult = {
+  ok?: boolean;
+  error?: string;
+};
+
 type CoverUploadResult = {
   publicUrl?: string;
   path?: string;
   error?: string;
 };
 
-export function PostComposer() {
+type PostComposerProps = {
+  mode?: 'create' | 'edit';
+  postId?: string;
+  initialValues?: {
+    type: PostType;
+    title: string;
+    excerpt: string;
+    body: string;
+    milestone: string;
+    tags: string[];
+    coverUrl: string;
+    coverPath: string;
+  };
+};
+
+export function PostComposer({ mode = 'create', postId, initialValues }: PostComposerProps) {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
-  const [type, setType] = useState<PostType>('journey');
-  const [title, setTitle] = useState('');
-  const [excerpt, setExcerpt] = useState('');
-  const [body, setBody] = useState('');
-  const [milestone, setMilestone] = useState('');
-  const [tags, setTags] = useState('');
-  const [coverUrl, setCoverUrl] = useState('');
-  const [coverPath, setCoverPath] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const [type, setType] = useState<PostType>(initialValues?.type ?? 'journey');
+  const [title, setTitle] = useState(initialValues?.title ?? '');
+  const [excerpt, setExcerpt] = useState(initialValues?.excerpt ?? '');
+  const [body, setBody] = useState(initialValues?.body ?? '');
+  const [milestone, setMilestone] = useState(initialValues?.milestone ?? '');
+  const [tags, setTags] = useState(initialValues?.tags.join(', ') ?? '');
+  const [coverUrl, setCoverUrl] = useState(initialValues?.coverUrl ?? '');
+  const [coverPath, setCoverPath] = useState(initialValues?.coverPath ?? '');
   const [error, setError] = useState<string | null>(null);
+  const isEdit = mode === 'edit';
 
   const tagList = useMemo(
     () => tags
@@ -60,7 +82,7 @@ export function PostComposer() {
       : uploadingCover
         ? 'Wait for the cover upload to finish.'
         : null;
-  const canPublish = !publishBlocker && !submitting;
+  const canPublish = !publishBlocker && !submitting && !deleting;
 
   async function onCoverChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -108,8 +130,8 @@ export function PostComposer() {
     setSubmitting(true);
 
     try {
-      const response = await fetch('/api/posts', {
-        method: 'POST',
+      const response = await fetch(isEdit && postId ? `/api/posts/${postId}` : '/api/posts', {
+        method: isEdit ? 'PATCH' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type,
@@ -125,22 +147,52 @@ export function PostComposer() {
       const result = (await response.json().catch(() => null)) as CreatePostResult | null;
 
       if (!response.ok || !result?.slug) {
-        setError(result?.error ?? 'Could not publish this dispatch. Try again.');
+        setError(result?.error ?? `Could not ${isEdit ? 'update' : 'publish'} this dispatch. Try again.`);
         setSubmitting(false);
         return;
       }
 
-      trackClientEvent('post_publish_success', {
-        type,
-        tag_count: tagList.length,
-        has_cover: Boolean(coverUrl),
-        word_count: wordCount,
-      });
+      if (!isEdit) {
+        trackClientEvent('post_publish_success', {
+          type,
+          tag_count: tagList.length,
+          has_cover: Boolean(coverUrl),
+          word_count: wordCount,
+        });
+      }
       router.push(`/p/${result.slug}`);
       router.refresh();
     } catch {
-      setError('Could not reach the publish server. Check your connection and try again.');
+      setError(`Could not reach the ${isEdit ? 'update' : 'publish'} server. Check your connection and try again.`);
       setSubmitting(false);
+    }
+  }
+
+  async function onDelete() {
+    if (!isEdit || !postId || deleting) return;
+    const confirmed = window.confirm(`Delete "${trimmedTitle || 'this dispatch'}"? This cannot be undone.`);
+    if (!confirmed) return;
+
+    setDeleting(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: 'DELETE',
+      });
+      const result = (await response.json().catch(() => null)) as DeletePostResult | null;
+
+      if (!response.ok || !result?.ok) {
+        setError(result?.error ?? 'Could not delete this dispatch. Try again.');
+        setDeleting(false);
+        return;
+      }
+
+      router.push('/feed');
+      router.refresh();
+    } catch {
+      setError('Could not reach the delete server. Check your connection and try again.');
+      setDeleting(false);
     }
   }
 
@@ -242,9 +294,22 @@ export function PostComposer() {
       <div className="composer-submit">
         <p>{publishBlocker ?? 'Publish a dispatch when there is one clear thing another student founder can learn.'}</p>
         <button className="button venture" type="submit" disabled={!canPublish}>
-          {submitting ? 'Publishing...' : uploadingCover ? 'Uploading cover...' : 'Publish dispatch'}
+          {submitting ? (isEdit ? 'Saving...' : 'Publishing...') : null}
+          {!submitting && uploadingCover ? 'Uploading cover...' : null}
+          {!submitting && !uploadingCover ? (isEdit ? 'Save changes' : 'Publish dispatch') : null}
         </button>
       </div>
+      {isEdit ? (
+        <div className="danger-zone">
+          <div>
+            <strong>Delete this dispatch</strong>
+            <span>Remove it from feeds, your profile, and all reader views.</span>
+          </div>
+          <button className="button danger" type="button" onClick={onDelete} disabled={deleting || submitting}>
+            {deleting ? 'Deleting...' : 'Delete dispatch'}
+          </button>
+        </div>
+      ) : null}
     </form>
   );
 }

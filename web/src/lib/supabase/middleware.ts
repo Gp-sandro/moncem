@@ -6,7 +6,7 @@ const protectedPathPrefixes = [
   '/connect',
   '/feed',
   '/p',
-  '/post/new',
+  '/post',
   '/u',
   '/settings',
   '/me',
