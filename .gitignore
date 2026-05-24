@@ -3,6 +3,12 @@
 # dependencies
 node_modules/
 
+# local agent/tooling state
+.claude/
+claude_stuff/
+claude_stuff/.claude/
+.vercel/
+
 # Expo
 .expo/
 dist/
@@ -25,13 +31,31 @@ expo-env.d.ts
 npm-debug.*
 yarn-debug.*
 yarn-error.*
+.expo-start*.log
+*.log
+
+# local/generated documents and separate share sites
+*.pdf
+moncem-investor-deck/
+moncem-space-onepager/
+launch-support.html
+WEB_STUDENT_FOUNDERS_PLAN.md
+design/
+
+# local-only database/admin helpers
+db/seed_dummy_data.sql
+scripts/supabase-audit.js
 
 # macOS
 .DS_Store
 *.pem
 
 # local env files
-.env*.local
+.env
+.env.*
+!.env.example
+!web/.env.local.example
+!web/.env.example
 
 # typescript
 *.tsbuildinfo
