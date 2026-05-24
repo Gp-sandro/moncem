@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { FeedEmptyState } from '@/components/FeedEmptyState';
 import { PostCard } from '@/components/PostCard';
 import { getRecentPosts } from '@/lib/data';
 import { isUserEmailVerified } from '@/lib/auth';
@@ -37,39 +38,26 @@ export default async function FeedPage() {
 
   return (
     <main className="feed-page">
-      <section className="shell feed-hero-strip">
+      <section className="shell compact-page-header feed-compact-header">
         <div>
-          <p className="eyebrow">Student founder feed</p>
-          <h1 className="feed-title">Proof from people still in motion.</h1>
-          <p className="section-copy">
-            Read one clear dispatch at a time: what they built, what moved, and
-            who is open to talk.
-          </p>
+          <h1>Feed</h1>
+          <p>Dispatches from student founders building in public.</p>
         </div>
-        <div className="feed-metrics" aria-label="Feed summary">
-          <div>
-            <strong>{posts.length}</strong>
-            <span>live stories</span>
-          </div>
-          <div>
-            <strong>{posts.reduce((total, post) => total + post.sparkedCount, 0)}</strong>
-            <span>sparks</span>
-          </div>
-        </div>
+        <Link className="button venture" href="/post/new">
+          Post
+        </Link>
       </section>
 
       {showProfileCompletion ? (
-        <section className="shell completion-card feed-completion-card">
+        <section className="shell completion-card feed-completion-card slim-completion-card">
           <div>
-            <p className="eyebrow">Profile strength</p>
-            <h2>Finish the signals that help student founders find you.</h2>
+            <strong>Complete your founder signal</strong>
             <p>
-              Add your school, current project, and connect status so Schools and
-              Connect become useful for the beta group.
+              Add school, current project, and connect status so builders can find you.
             </p>
           </div>
           <Link className="button venture" href="/settings/profile">
-            Complete profile
+            Complete
           </Link>
         </section>
       ) : null}
@@ -93,10 +81,8 @@ export default async function FeedPage() {
           ))}
         </section>
       ) : (
-        <section className="shell section">
-          <div className="empty">
-          <p>Your web feed is quiet right now.</p>
-          </div>
+        <section className="shell feed-scroll">
+          <FeedEmptyState />
         </section>
       )}
     </main>

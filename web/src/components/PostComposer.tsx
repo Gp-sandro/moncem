@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { trackClientEvent } from '@/lib/analytics-client';
@@ -16,6 +16,25 @@ const typeOptions: Array<{
   { value: 'idea', label: 'Idea', hint: 'A sharp problem and why it matters now.' },
   { value: 'demo', label: 'Demo', hint: 'Show the product, prototype, or launch.' },
 ];
+
+const promptOptions = [
+  {
+    label: 'What shipped?',
+    body: 'What shipped? What changed because it exists now? What should another builder learn from it?',
+  },
+  {
+    label: 'What broke?',
+    body: 'What broke? What did you try first? What did the failure teach you?',
+  },
+  {
+    label: 'What number moved?',
+    body: 'What number moved? What caused it? What are you testing next?',
+  },
+  {
+    label: 'What feedback do you need?',
+    body: 'What decision are you stuck on? What context does another founder need before replying?',
+  },
+] as const;
 
 type CreatePostResult = {
   slug?: string;
@@ -62,7 +81,13 @@ export function PostComposer({ mode = 'create', postId, initialValues }: PostCom
   const [coverUrl, setCoverUrl] = useState(initialValues?.coverUrl ?? '');
   const [coverPath, setCoverPath] = useState(initialValues?.coverPath ?? '');
   const [error, setError] = useState<string | null>(null);
+  const [selectedPrompt, setSelectedPrompt] = useState<(typeof promptOptions)[number] | null>(null);
+  const trackedFirstInput = useRef(false);
   const isEdit = mode === 'edit';
+
+  useEffect(() => {
+    trackClientEvent('compose_view', { mode });
+  }, [mode]);
 
   const tagList = useMemo(
     () => tags
@@ -83,6 +108,20 @@ export function PostComposer({ mode = 'create', postId, initialValues }: PostCom
         ? 'Wait for the cover upload to finish.'
         : null;
   const canPublish = !publishBlocker && !submitting && !deleting;
+
+  function trackFirstInput() {
+    if (trackedFirstInput.current) return;
+    trackedFirstInput.current = true;
+    trackClientEvent('compose_first_input', { mode });
+  }
+
+  function onPromptSelect(prompt: (typeof promptOptions)[number]) {
+    setSelectedPrompt(prompt);
+    trackClientEvent('compose_prompt_selected', {
+      mode,
+      prompt: prompt.label,
+    });
+  }
 
   async function onCoverChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -121,6 +160,14 @@ export function PostComposer({ mode = 'create', postId, initialValues }: PostCom
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    trackClientEvent('compose_publish_attempt', {
+      mode,
+      type,
+      tag_count: tagList.length,
+      has_cover: Boolean(coverUrl),
+      has_milestone: Boolean(milestone.trim()),
+      word_count: wordCount,
+    });
 
     if (!canPublish) {
       setError('Add a title and at least a few sentences before publishing.');
@@ -197,119 +244,163 @@ export function PostComposer({ mode = 'create', postId, initialValues }: PostCom
   }
 
   return (
-    <form className="composer" onSubmit={onSubmit}>
+    <form className="composer composer-writing" onSubmit={onSubmit}>
       {error ? <div className="error">{error}</div> : null}
 
-      <fieldset className="type-grid" aria-label="Post type">
-        {typeOptions.map((option) => (
-          <label className={`type-option ${type === option.value ? 'selected' : ''}`} key={option.value}>
-            <input
-              type="radio"
-              name="type"
-              value={option.value}
-              checked={type === option.value}
-              onChange={() => setType(option.value)}
-            />
-            <span>{option.label}</span>
-            <small>{option.hint}</small>
-          </label>
-        ))}
-      </fieldset>
-
-      <label className={`cover-upload ${coverUrl ? 'has-cover' : ''}`}>
-        <span>Cover image</span>
-        <input type="file" accept="image/jpeg,image/png,image/webp,image/heic" onChange={onCoverChange} />
-        {coverUrl ? (
-          <span className="cover-preview" aria-label="Uploaded cover preview">
-            <Image src={coverUrl} alt="" fill sizes="(max-width: 900px) 100vw, 900px" />
-            <strong>Replace cover</strong>
-          </span>
-        ) : (
-          <span className="cover-empty">
-            <strong>{uploadingCover ? 'Uploading cover...' : 'Add cover image'}</strong>
-            <small>JPEG, PNG, WebP, or HEIC. Max 5MB.</small>
-          </span>
-        )}
-      </label>
-
-      <label className="composer-title">
-        <span className="sr-only">Title</span>
-        <textarea
-          rows={2}
-          maxLength={150}
-          placeholder="Title your dispatch"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          required
-        />
-      </label>
-
-      <label className="composer-excerpt">
-        <span className="sr-only">Excerpt</span>
-        <textarea
-          rows={2}
-          maxLength={240}
-          placeholder="One sentence that makes another builder want to open this."
-          value={excerpt}
-          onChange={(event) => setExcerpt(event.target.value)}
-        />
-      </label>
-
-      <label className="composer-body">
-        <span className="sr-only">Body</span>
-        <textarea
-          rows={12}
-          maxLength={10000}
-          placeholder="Write what really happened. The decision, the number, the failed attempt, the lesson."
-          value={body}
-          onChange={(event) => setBody(event.target.value)}
-          required
-        />
-      </label>
-
-      <div className="composer-utility">
-        <label>
-          <span>Proof</span>
-          <input
-            maxLength={150}
-            placeholder="$4.2k MRR, 50 users, shipped v1"
-            value={milestone}
-            onChange={(event) => setMilestone(event.target.value)}
-          />
-        </label>
-        <label>
-          <span>Tags</span>
-          <input
-            placeholder="AI, SaaS, UC Davis"
-            value={tags}
-            onChange={(event) => setTags(event.target.value)}
-          />
-        </label>
-        <div className="composer-count">
-          <span>{wordCount}w</span>
-          <small>{tagList.length}/5 tags</small>
+      <div className="composer-main">
+        <div className="prompt-strip" aria-label="Writing prompts">
+          {promptOptions.map((prompt) => (
+            <button
+              className={selectedPrompt?.label === prompt.label ? 'active' : undefined}
+              key={prompt.label}
+              type="button"
+              onClick={() => onPromptSelect(prompt)}
+            >
+              {prompt.label}
+            </button>
+          ))}
         </div>
+
+        {selectedPrompt ? <p className="prompt-helper">{selectedPrompt.body}</p> : null}
+
+        <label className="composer-title">
+          <span className="sr-only">Title</span>
+          <textarea
+            rows={2}
+            maxLength={150}
+            placeholder="What changed this week?"
+            value={title}
+            onChange={(event) => {
+              trackFirstInput();
+              setTitle(event.target.value);
+            }}
+            required
+          />
+        </label>
+
+        <label className="composer-excerpt">
+          <span className="sr-only">Excerpt</span>
+          <textarea
+            rows={2}
+            maxLength={240}
+            placeholder="One sentence another builder would open."
+            value={excerpt}
+            onChange={(event) => {
+              trackFirstInput();
+              setExcerpt(event.target.value);
+            }}
+          />
+        </label>
+
+        <label className="composer-body">
+          <span className="sr-only">Body</span>
+          <textarea
+            rows={12}
+            maxLength={10000}
+            placeholder={selectedPrompt?.body ?? 'What happened, what you tried, what moved, what you need next.'}
+            value={body}
+            onChange={(event) => {
+              trackFirstInput();
+              setBody(event.target.value);
+            }}
+            required
+          />
+        </label>
       </div>
 
+      <details className="composer-rail" open>
+        <summary>Dispatch settings</summary>
+        <div className="rail-stack">
+          <section className="rail-card">
+            <p className="eyebrow">Good dispatch</p>
+            <ul className="dispatch-checklist">
+              <li>1 decision</li>
+              <li>1 number</li>
+              <li>1 ask</li>
+            </ul>
+          </section>
+
+          <fieldset className="type-grid" aria-label="Post type">
+            {typeOptions.map((option) => (
+              <label className={`type-option ${type === option.value ? 'selected' : ''}`} key={option.value}>
+                <input
+                  type="radio"
+                  name="type"
+                  value={option.value}
+                  checked={type === option.value}
+                  onChange={() => setType(option.value)}
+                />
+                <span>{option.label}</span>
+                <small>{option.hint}</small>
+              </label>
+            ))}
+          </fieldset>
+
+          <label className={`cover-upload ${coverUrl ? 'has-cover' : ''}`}>
+            <span>Cover image</span>
+            <input type="file" accept="image/jpeg,image/png,image/webp,image/heic" onChange={onCoverChange} />
+            {coverUrl ? (
+              <span className="cover-preview" aria-label="Uploaded cover preview">
+                <Image src={coverUrl} alt="" fill sizes="(max-width: 900px) 100vw, 320px" />
+                <strong>Replace cover</strong>
+              </span>
+            ) : (
+              <span className="cover-empty">
+                <strong>{uploadingCover ? 'Uploading cover...' : 'Add cover image'}</strong>
+                <small>JPEG, PNG, WebP, or HEIC. Max 5MB.</small>
+              </span>
+            )}
+          </label>
+
+          <div className="composer-utility">
+            <label>
+              <span>Proof</span>
+              <input
+                maxLength={150}
+                placeholder="10 users, $120 MRR, 3 interviews, shipped v1"
+                value={milestone}
+                onChange={(event) => {
+                  trackFirstInput();
+                  setMilestone(event.target.value);
+                }}
+              />
+            </label>
+            <label>
+              <span>Tags</span>
+              <input
+                placeholder="AI, SaaS, UC Davis"
+                value={tags}
+                onChange={(event) => setTags(event.target.value)}
+              />
+            </label>
+            <div className="composer-count">
+              <span>{wordCount}w</span>
+              <small>{tagList.length}/5 tags</small>
+            </div>
+          </div>
+
+          {isEdit ? (
+            <div className="danger-zone">
+              <div>
+                <strong>Delete this dispatch</strong>
+                <span>Remove it from feeds, your profile, and all reader views.</span>
+              </div>
+              <button className="button danger" type="button" onClick={onDelete} disabled={deleting || submitting}>
+                {deleting ? 'Deleting...' : 'Delete dispatch'}
+              </button>
+            </div>
+          ) : null}
+        </div>
+      </details>
+
       <div className="composer-submit">
-        <p>{publishBlocker ?? 'Publish a dispatch when there is one clear thing another student founder can learn.'}</p>
+        <p>{publishBlocker ?? 'Ready when the lesson is clear.'}</p>
         <button className="button venture" type="submit" disabled={!canPublish}>
           {submitting ? (isEdit ? 'Saving...' : 'Publishing...') : null}
           {!submitting && uploadingCover ? 'Uploading cover...' : null}
           {!submitting && !uploadingCover ? (isEdit ? 'Save changes' : 'Publish dispatch') : null}
         </button>
       </div>
-      {isEdit ? (
-        <div className="danger-zone">
-          <div>
-            <strong>Delete this dispatch</strong>
-            <span>Remove it from feeds, your profile, and all reader views.</span>
-          </div>
-          <button className="button danger" type="button" onClick={onDelete} disabled={deleting || submitting}>
-            {deleting ? 'Deleting...' : 'Delete dispatch'}
-          </button>
-        </div>
-      ) : null}
     </form>
   );
 }

@@ -33,38 +33,14 @@ export default async function SchoolsPage() {
 
   return (
     <main className="discovery-page">
-      <section className="shell school-hero">
-        <div className="school-hero-main">
-          <p className="eyebrow">Schools</p>
-          <h1>Every campus should have a founder map.</h1>
-          <p>
-            School pages make Moncem feel local: who is shipping here, what proof exists,
-            and where ambitious students can plug in.
-          </p>
+      <section className="shell compact-page-header">
+        <div>
+          <h1>Schools</h1>
+          <p>Find student founders by campus.</p>
         </div>
-        <aside className="campus-stats">
-          <div>
-            <strong>{schools.length}</strong>
-            <span>campuses</span>
-          </div>
-          <div>
-            <strong>{profiles.length}</strong>
-            <span>builders</span>
-          </div>
-          <div>
-            <strong>{posts.length}</strong>
-            <span>stories</span>
-          </div>
-        </aside>
       </section>
 
       <section className="shell section compact-section">
-        <div className="section-head">
-          <div>
-            <p className="eyebrow">Campus map</p>
-            <h2 className="display-title">Browse schools by founder activity.</h2>
-          </div>
-        </div>
         {campusCards.length > 0 ? (
           <div className="field-grid-large">
             {campusCards.map((school, index) => (
@@ -81,9 +57,10 @@ export default async function SchoolsPage() {
           <div className="empty empty-action">
             <div>
               <p className="eyebrow">No schools yet</p>
-              <p>School pages will appear after student profiles include school names.</p>
+              <h2>No campus activity yet.</h2>
+              <p>School pages appear after student profiles include school names.</p>
               <Link href="/signup" className="button venture">
-                Complete a student profile
+                Add your school
               </Link>
             </div>
           </div>
@@ -93,7 +70,7 @@ export default async function SchoolsPage() {
       <section className="shell school-layout section">
         <aside className="discovery-sidebar">
           <section className="discovery-panel">
-            <p className="eyebrow">Featured developers</p>
+            <p className="eyebrow">Builders</p>
             <h3>People shipping across schools.</h3>
             {profiles.length > 0 ? (
               <div className="founder-list">
@@ -108,10 +85,6 @@ export default async function SchoolsPage() {
         </aside>
         <div className="stories">
           <div className="section-head">
-            <div>
-              <p className="eyebrow">Campus dispatches</p>
-              <h2 className="display-title">Proof from student builders.</h2>
-            </div>
             <Link href="/explore" className="button secondary">
               Explore all
             </Link>

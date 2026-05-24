@@ -64,15 +64,11 @@ export default async function EditPostPage({ params }: Props) {
 
   return (
     <main className="composer-page">
-      <section className="shell composer-hero">
+      <section className="shell compact-page-header composer-compact-header">
         <div>
-          <p className="eyebrow">Edit dispatch</p>
-          <h1>Tighten the story without losing the proof.</h1>
+          <h1>Edit dispatch</h1>
+          <p>Tighten the lesson without losing the proof.</p>
         </div>
-        <p>
-          Update the lesson, proof, tags, or cover. Readers should still leave with one clear
-          builder insight.
-        </p>
       </section>
       <section className="shell">
         <PostComposer

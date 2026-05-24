@@ -28,36 +28,14 @@ export default async function ExplorePage() {
 
   return (
     <main className="discovery-page">
-      <section className="shell discovery-hero">
+      <section className="shell compact-page-header">
         <div>
-          <p className="eyebrow">Explore</p>
-          <h1 className="discovery-title">
-            Find the fields where student founders are moving.
-          </h1>
-          <p className="lead">
-            Explore is Moncem&apos;s market map: fields first, proof second, people third.
-            See where activity is happening before everyone else catches up.
-          </p>
+          <h1>Explore</h1>
+          <p>Fields, proof, and builders worth opening.</p>
         </div>
-        <aside className="pulse-card">
-          <div>
-            <p className="eyebrow">Market pulse</p>
-            <strong>{posts.length + profiles.length}</strong>
-          </div>
-          <p>live stories and founder signals across student projects.</p>
-        </aside>
       </section>
 
       <section className="shell section compact-section">
-        <div className="section-head">
-          <div>
-            <p className="eyebrow">Explore fields</p>
-            <h2 className="display-title">Browse by momentum.</h2>
-          </div>
-          <p className="section-copy">
-            Large field cards are decision surfaces: what market do you care about today?
-          </p>
-        </div>
         {primaryTopics.length > 0 ? (
           <div className="field-grid-large">
             {primaryTopics.map((topic, index) => (
@@ -79,12 +57,6 @@ export default async function ExplorePage() {
 
       <section className="shell discovery-layout section">
         <div className="stories">
-          <div className="section-head">
-            <div>
-              <p className="eyebrow">Latest dispatches</p>
-              <h2 className="display-title">Proof worth opening.</h2>
-            </div>
-          </div>
           {leadPost ? (
             <>
               <PostCard
@@ -111,8 +83,8 @@ export default async function ExplorePage() {
         </div>
         <aside className="discovery-sidebar">
           <section className="discovery-panel">
-            <p className="eyebrow">Featured developers</p>
-            <h3>People worth following before they are obvious.</h3>
+            <p className="eyebrow">Builders</p>
+            <h3>People shipping early.</h3>
             {profiles.length > 0 ? (
               <div className="founder-list">
                 {profiles.slice(0, 4).map((profile) => (
@@ -124,7 +96,7 @@ export default async function ExplorePage() {
             )}
           </section>
           <section className="discovery-panel">
-            <p className="eyebrow">Browse by interest</p>
+            <p className="eyebrow">Interests</p>
             {topics.length > 0 ? (
               <div className="chip-list">
                 {topics.map((topic) => (

@@ -20,15 +20,11 @@ export default async function NewPostPage() {
 
   return (
     <main className="composer-page">
-      <section className="shell composer-hero">
+      <section className="shell compact-page-header composer-compact-header">
         <div>
-          <p className="eyebrow">New dispatch</p>
-          <h1>Write the thing another student founder needs to see.</h1>
+          <h1>New dispatch</h1>
+          <p>One decision, one number, one ask.</p>
         </div>
-        <p>
-          Keep it concrete: what you built, what moved, what failed, and what number
-          proves the lesson is real.
-        </p>
       </section>
       <section className="shell">
         <PostComposer />

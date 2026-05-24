@@ -32,21 +32,11 @@ export default async function TagPage({ params }: Props) {
 
   return (
     <main className="discovery-page">
-      <section className="shell discovery-hero">
+      <section className="shell compact-page-header">
         <div>
-          <p className="eyebrow">Explore / {decoded}</p>
-          <h1 className="discovery-title">{decoded} stories from student founders</h1>
-          <p className="lead">
-            A filtered field feed for the builders, demos, asks, and proof moving in {decoded}.
-          </p>
+          <h1>{decoded}</h1>
+          <p>{posts.length} {posts.length === 1 ? 'dispatch' : 'dispatches'} from student founders.</p>
         </div>
-        <aside className="pulse-card">
-          <div>
-            <p className="eyebrow">Field pulse</p>
-            <strong>{posts.length}</strong>
-          </div>
-          <p>{posts.length === 1 ? 'story' : 'stories'} from student founders in this field.</p>
-        </aside>
       </section>
       <section className="shell feed-scroll section">
         <Link href="/explore" className="button secondary tag-back-link">

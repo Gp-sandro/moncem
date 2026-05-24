@@ -48,24 +48,11 @@ export default async function ConnectPage({ searchParams }: Props) {
 
   return (
     <main className="discovery-page">
-      <section className="shell discovery-hero">
+      <section className="shell compact-page-header">
         <div>
-          <p className="eyebrow">Connections</p>
-          <h1 className="discovery-title">
-            Start conversations with context.
-          </h1>
-          <p className="lead">
-            Connect should never feel like a cold directory. Every card shows intent,
-            proof, and the cleanest reason to open the founder profile.
-          </p>
+          <h1>Connect</h1>
+          <p>Start from a founder profile, not a cold DM.</p>
         </div>
-        <aside className="pulse-card">
-          <div>
-            <p className="eyebrow">Open this week</p>
-            <strong>{connectableProfiles.length}</strong>
-          </div>
-          <p>student founders are open or selective for useful conversations.</p>
-        </aside>
       </section>
 
       <section className="shell filter-row" aria-label="Connection filters">
@@ -101,9 +88,10 @@ export default async function ConnectPage({ searchParams }: Props) {
             <div className="empty empty-action">
               <div>
                 <p className="eyebrow">No matching founders</p>
-                <p>No open student founders match these filters yet.</p>
-                <Link href="/connect" className="button secondary">
-                  Clear filters
+                <h2>No open founders match this yet.</h2>
+                <p>Profiles appear here when builders set their status to Open to connect.</p>
+                <Link href="/settings/profile" className="button venture">
+                  Complete your profile
                 </Link>
               </div>
             </div>
