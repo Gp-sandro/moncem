@@ -39,8 +39,8 @@ export function SiteHeader({
             className="brand-logo"
             src="/logos/moncem-wordmark-black.svg"
             alt="Moncem"
-            width={184}
-            height={30}
+            width={219}
+            height={27}
             priority
           />
         </Link>

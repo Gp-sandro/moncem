@@ -91,37 +91,9 @@ a {
 }
 
 .brand-logo {
-  width: 146px;
+  width: 154px;
   height: auto;
   display: block;
-}
-
-.brand-mark,
-.founder-mark {
-  width: 32px;
-  height: 32px;
-  display: grid;
-  place-items: center;
-  letter-spacing: 0;
-}
-
-.founder-mark {
-  color: var(--ink);
-}
-
-.founder-mark svg {
-  width: 32px;
-  height: 32px;
-  overflow: visible;
-}
-
-.moncem-mark {
-  fill: currentColor;
-}
-
-.brand-wordmark {
-  font: 850 21px/1 var(--ui);
-  letter-spacing: 0.18em;
 }
 
 .nav {
@@ -3139,10 +3111,6 @@ a {
   .site-header-inner {
     min-height: 64px;
     gap: 12px;
-  }
-
-  .brand span:last-child {
-    display: none;
   }
 
   .header-right {
