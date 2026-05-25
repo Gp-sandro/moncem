@@ -1,8 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FounderMark } from '@/components/FounderMark';
 
 const baseNavLinks = [
   { href: '/feed', label: 'Feed' },
@@ -35,8 +35,14 @@ export function SiteHeader({
     <header className="site-header">
       <div className="shell site-header-inner">
         <Link href="/" className="brand" aria-label="Moncem home">
-          <FounderMark />
-          <span className="brand-wordmark">Moncem</span>
+          <Image
+            className="brand-logo"
+            src="/logos/moncem-wordmark-black.svg"
+            alt="Moncem"
+            width={184}
+            height={30}
+            priority
+          />
         </Link>
         <div className="header-right">
           <nav className="nav" aria-label="Primary navigation">

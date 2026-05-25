@@ -87,8 +87,13 @@ a {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
   color: var(--ink);
+}
+
+.brand-logo {
+  width: 146px;
+  height: auto;
+  display: block;
 }
 
 .brand-mark,
