@@ -1,10 +1,9 @@
 export function FounderMark() {
   return (
     <span className="founder-mark" aria-hidden="true">
-      <svg viewBox="0 0 42 42" focusable="false">
-        <path className="mark-frame" d="M21 3 39 21 21 39 3 21 21 3Z" />
-        <path className="mark-left" d="M12 28V13l9 9 9-9v15" />
-        <path className="mark-proof" d="M12 28h18" />
+      <svg viewBox="0 0 64 64" focusable="false">
+        <path className="moncem-mark" d="M18 2h28L32 20 18 2Z" />
+        <path className="moncem-mark" d="M8 58V22l24 27 24-27v36H45V43L32 58 19 43v15H8Z" />
       </svg>
     </span>
   );

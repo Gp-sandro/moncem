@@ -36,7 +36,7 @@ export function SiteHeader({
       <div className="shell site-header-inner">
         <Link href="/" className="brand" aria-label="Moncem home">
           <FounderMark />
-          <span>MONCEM</span>
+          <span className="brand-wordmark">Moncem</span>
         </Link>
         <div className="header-right">
           <nav className="nav" aria-label="Primary navigation">

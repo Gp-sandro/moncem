@@ -87,51 +87,36 @@ a {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  font: 800 13px/1 var(--mono);
-  letter-spacing: 0.28em;
+  gap: 9px;
+  color: var(--ink);
 }
 
 .brand-mark,
 .founder-mark {
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   display: grid;
   place-items: center;
-  border-radius: 999px;
-  color: var(--venture);
-  background: var(--venture-soft);
   letter-spacing: 0;
 }
 
 .founder-mark {
-  border: 1px solid rgba(24, 140, 97, 0.24);
-  background:
-    radial-gradient(circle at 75% 20%, rgba(37, 87, 214, 0.16), transparent 14px),
-    var(--venture-soft);
+  color: var(--ink);
 }
 
 .founder-mark svg {
-  width: 25px;
-  height: 25px;
+  width: 32px;
+  height: 32px;
   overflow: visible;
 }
 
-.founder-mark path {
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.moncem-mark {
+  fill: currentColor;
 }
 
-.mark-frame {
-  stroke: var(--venture);
-  stroke-width: 2.2;
-}
-
-.mark-left,
-.mark-proof {
-  stroke: var(--ink);
-  stroke-width: 2.7;
+.brand-wordmark {
+  font: 850 21px/1 var(--ui);
+  letter-spacing: 0.18em;
 }
 
 .nav {
