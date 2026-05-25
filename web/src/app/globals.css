@@ -91,7 +91,8 @@ a {
 }
 
 .brand-logo {
-  width: 154px;
+  width: 132px;
+  max-width: 32vw;
   height: auto;
   display: block;
 }
@@ -3111,6 +3112,11 @@ a {
   .site-header-inner {
     min-height: 64px;
     gap: 12px;
+  }
+
+  .brand-logo {
+    width: 112px;
+    max-width: 30vw;
   }
 
   .header-right {
