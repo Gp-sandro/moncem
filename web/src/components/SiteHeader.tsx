@@ -37,9 +37,9 @@ export function SiteHeader({
         <Link href="/" className="brand" aria-label="Moncem home">
           <Image
             className="brand-logo"
-            src="/logos/moncem-wordmark-black.svg"
+            src="/logos/moncem-wordmark.png"
             alt="Moncem"
-            width={219}
+            width={197}
             height={27}
             priority
           />
