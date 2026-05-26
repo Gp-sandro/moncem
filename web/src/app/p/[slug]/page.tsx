@@ -94,6 +94,14 @@ export default async function PostPage({ params }: Props) {
             )}
           </div>
         </section>
+        <section className="reader-body">
+          <p className="eyebrow">Dispatch</p>
+          {paragraphs.length > 0 ? (
+            paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
+          ) : (
+            <p>This student founder has not added the full story yet.</p>
+          )}
+        </section>
         <section className="panel reader-reactions">
           <div>
             <p className="eyebrow">Builder signal</p>
@@ -110,13 +118,6 @@ export default async function PostPage({ params }: Props) {
             initialActiveReactions={activeReactions[post.id] ?? []}
             isAuthenticated
           />
-        </section>
-        <section className="reader-body">
-          {paragraphs.length > 0 ? (
-            paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
-          ) : (
-            <p>This student founder has not added the full story yet.</p>
-          )}
         </section>
       </article>
     </main>

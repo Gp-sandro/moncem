@@ -1459,59 +1459,96 @@ a {
 }
 
 .reader {
-  width: min(900px, calc(100% - 32px));
+  width: min(960px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 64px 0;
+  padding: 48px 0 72px;
 }
 
 .reader-hero {
   overflow: hidden;
-  border-radius: 34px;
+  border: 1px solid rgba(17, 22, 24, 0.1);
+  border-radius: 30px;
   background:
-    radial-gradient(circle at 82% 0%, rgba(255, 255, 255, 0.2), transparent 180px),
-    linear-gradient(135deg, var(--cobalt), var(--ink));
+    radial-gradient(circle at 92% 4%, rgba(255, 255, 255, 0.16), transparent 180px),
+    linear-gradient(135deg, #3049bf 0%, #15253f 72%, var(--ink) 100%);
+  box-shadow: 0 24px 70px rgba(17, 22, 24, 0.12);
 }
 
 .reader-hero-inner {
-  min-height: 420px;
+  min-height: 320px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: clamp(24px, 6vw, 56px);
+  padding: clamp(24px, 5vw, 44px);
   color: white;
 }
 
 .reader-hero h1 {
-  max-width: 14ch;
+  max-width: 16ch;
   margin: 0;
-  font: 700 clamp(42px, 7vw, 72px)/1 var(--display);
-  letter-spacing: -0.04em;
+  font: 700 clamp(38px, 5.4vw, 58px)/1.04 var(--display);
+  letter-spacing: -0.036em;
+}
+
+.reader-hero .post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 30px;
+  padding-top: 0;
+}
+
+.reader-hero .pill {
+  min-height: 34px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.92);
 }
 
 .reader-body {
-  margin-top: 22px;
-  padding: clamp(24px, 5vw, 48px);
-  border-radius: 28px;
-  background: white;
+  margin-top: 18px;
+  border: 1px solid rgba(17, 22, 24, 0.1);
+  border-radius: 30px;
+  padding: clamp(28px, 5vw, 54px);
+  background: rgba(255, 255, 255, 0.96);
   color: var(--ink);
-  font-family: var(--display);
-  font-size: clamp(18px, 2vw, 20px);
-  line-height: 1.72;
+  box-shadow: 0 22px 62px rgba(17, 22, 24, 0.07);
 }
 
-.reader-body p {
-  margin: 0 0 1.15em;
+.reader-body .eyebrow {
+  margin: 0 0 18px;
+  color: var(--venture);
+}
+
+.reader-body p:not(.eyebrow) {
+  max-width: 68ch;
+  margin: 0 auto 1.05em;
+  color: #101618;
+  font-family: var(--ui);
+  font-size: clamp(17px, 1.5vw, 19px);
+  font-weight: 560;
+  line-height: 1.75;
+  letter-spacing: -0.006em;
+}
+
+.reader-body .eyebrow + p {
+  font-size: clamp(18px, 1.7vw, 21px);
+  line-height: 1.68;
+}
+
+.reader-body p:not(.eyebrow):last-child {
+  margin-bottom: 0;
 }
 
 .reader-reactions {
-  margin-top: 22px;
-  padding: 24px;
+  margin-top: 18px;
+  padding: 22px 24px;
 }
 
 .reader-reactions h2 {
   margin: 0;
-  font: 700 30px/1.05 var(--display);
-  letter-spacing: -0.032em;
+  font: 700 clamp(22px, 3vw, 28px)/1.08 var(--display);
+  letter-spacing: -0.028em;
 }
 
 .reader-reactions .reaction-shell {
