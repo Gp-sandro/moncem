@@ -22,6 +22,22 @@ export const metadata: Metadata = {
     siteName: 'Moncem',
     type: 'website',
   },
+  icons: {
+    icon: [
+      {
+        url: '/logos/moncem-icon-light.png',
+        type: 'image/png',
+        media: '(prefers-color-scheme: light)',
+      },
+      {
+        url: '/logos/moncem-icon-dark.png',
+        type: 'image/png',
+        media: '(prefers-color-scheme: dark)',
+      },
+    ],
+    shortcut: '/logos/moncem-icon-light.png',
+    apple: '/logos/moncem-icon-light.png',
+  },
 };
 
 export default async function RootLayout({
