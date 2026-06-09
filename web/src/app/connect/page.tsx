@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { ConnectionCard } from '@/components/ConnectionCard';
 import { isUserEmailVerified } from '@/lib/auth';
+import { isSchoolsEnabled } from '@/lib/env';
 import { getConnectableProfiles, getFeaturedProfiles, getSchoolSummaries } from '@/lib/data';
 import { safeArray } from '@/lib/safe-data';
 import { createClient } from '@/lib/supabase/server';
@@ -24,6 +25,7 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function ConnectPage({ searchParams }: Props) {
+  if (!isSchoolsEnabled()) notFound();
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 

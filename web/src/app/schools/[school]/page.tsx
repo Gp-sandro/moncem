@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { FounderRow } from '@/components/FounderRow';
 import { PostCard } from '@/components/PostCard';
 import {
   getPostsBySchool,
   getProfilesBySchool,
 } from '@/lib/data';
+import { isSchoolsEnabled } from '@/lib/env';
 import { getActiveReactions } from '@/lib/interactions';
 import { safeArray } from '@/lib/safe-data';
 import { createClient } from '@/lib/supabase/server';
@@ -26,6 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function SchoolPage({ params }: Props) {
+  if (!isSchoolsEnabled()) notFound();
   const { school } = await params;
   const decoded = decodeURIComponent(school);
   const supabase = await createClient();

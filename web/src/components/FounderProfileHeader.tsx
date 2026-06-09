@@ -6,12 +6,13 @@ export function FounderProfileHeader({
   profile,
   posts,
   currentUserId,
+  isAuthenticated = true,
 }: {
   profile: PublicProfile;
   posts: PublicPost[];
   currentUserId?: string | null;
+  isAuthenticated?: boolean;
 }) {
-  const sparks = posts.reduce((sum, post) => sum + post.sparkedCount, 0);
   const proof = posts.filter((post) => post.milestone).length;
 
   return (
@@ -43,17 +44,15 @@ export function FounderProfileHeader({
             recipientName={profile.fullName}
             recipientStatus={profile.connectStatus}
             isOwnProfile={currentUserId === profile.id}
+            isAuthenticated={isAuthenticated}
+            joinNext={`/u/${profile.username}`}
           />
         </div>
       </div>
       <div className="stat-grid">
         <div className="stat">
           <strong>{posts.length}</strong>
-          <span>Stories</span>
-        </div>
-        <div className="stat">
-          <strong>{sparks}</strong>
-          <span>Sparks</span>
+          <span>{posts.length === 1 ? 'Dispatch' : 'Dispatches'}</span>
         </div>
         <div className="stat">
           <strong>{proof}</strong>

@@ -17,6 +17,8 @@ export function StartConversationButton({
   contextPostId,
   contextTitle,
   isOwnProfile = false,
+  isAuthenticated = true,
+  joinNext,
 }: {
   recipientId: string;
   recipientName: string;
@@ -24,6 +26,8 @@ export function StartConversationButton({
   contextPostId?: string;
   contextTitle?: string;
   isOwnProfile?: boolean;
+  isAuthenticated?: boolean;
+  joinNext?: string;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -83,7 +87,13 @@ export function StartConversationButton({
         type="button"
         disabled={disabled}
         aria-label={`Start a conversation with ${recipientName}`}
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          if (!isAuthenticated) {
+            router.push(`/join?next=${encodeURIComponent(joinNext ?? '/feed')}`);
+            return;
+          }
+          setOpen(true);
+        }}
       >
         Connect
       </button>

@@ -34,3 +34,12 @@ export function readingMinutes(body: string | null): number {
 export function postTypeLabel(type: string): string {
   return type.charAt(0).toUpperCase() + type.slice(1);
 }
+
+// Cover images must come from our own Supabase storage. Anything else
+// (legacy picsum.photos placeholders, etc.) is treated as "no cover" so the
+// typographic fallback renders instead of pointing next/image at a host that
+// is no longer allowed in next.config.
+export function usableCoverUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  return url.includes('.supabase.co/') ? url : null;
+}

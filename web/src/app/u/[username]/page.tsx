@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { FounderProfileHeader } from '@/components/FounderProfileHeader';
 import { PostCard } from '@/components/PostCard';
-import { isUserEmailVerified } from '@/lib/auth';
 import { getPostsByUsername, getProfileByUsername } from '@/lib/data';
+import { getSiteUrl } from '@/lib/env';
 import { getActiveReactions } from '@/lib/interactions';
 import { safeArray } from '@/lib/safe-data';
 import { createClient } from '@/lib/supabase/server';
@@ -15,10 +15,41 @@ type Props = {
 
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { username } = await params;
+  const profile = await getProfileByUsername(username);
+
+  if (!profile) {
+    return { title: 'Founder profile not found' };
+  }
+
+  const tagline = profile.currentProject ?? profile.bio ?? 'Building in public on Moncem.';
+  const description = [profile.school, tagline].filter(Boolean).join(' / ');
+  const canonical = `${getSiteUrl()}/u/${profile.username}`;
+  const image = `/api/og?${new URLSearchParams({
+    title: profile.fullName,
+    ...(profile.currentProject ? { proof: profile.currentProject } : {}),
+    author: `@${profile.username}`,
+    ...(profile.school ? { school: profile.school } : {}),
+  }).toString()}`;
+
   return {
-    title: 'Founder profile',
-    description: 'Sign in to view this Moncem founder profile.',
+    title: profile.fullName,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title: `${profile.fullName} on Moncem`,
+      description,
+      url: canonical,
+      type: 'profile',
+      images: [image],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${profile.fullName} on Moncem`,
+      description,
+      images: [image],
+    },
   };
 }
 
@@ -27,25 +58,26 @@ export default async function ProfilePage({ params }: Props) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect(`/join?next=${encodeURIComponent(`/u/${username}`)}`);
-  }
-  if (!isUserEmailVerified(user)) {
-    redirect(`/verify-email?next=${encodeURIComponent(`/u/${username}`)}`);
-  }
-
   const [profile, posts] = await Promise.all([
     getProfileByUsername(username),
     safeArray(getPostsByUsername(username)),
   ]);
 
   if (!profile) return notFound();
-  const isOwnProfile = profile.id === user.id;
-  const activeReactions = await getActiveReactions(supabase, user.id, posts.map((post) => post.id));
+  const isAuthenticated = Boolean(user);
+  const isOwnProfile = profile.id === user?.id;
+  const activeReactions = isAuthenticated
+    ? await getActiveReactions(supabase, user!.id, posts.map((post) => post.id))
+    : {};
 
   return (
     <main className="shell section">
-      <FounderProfileHeader profile={profile} posts={posts} currentUserId={user.id} />
+      <FounderProfileHeader
+        profile={profile}
+        posts={posts}
+        currentUserId={user?.id ?? null}
+        isAuthenticated={isAuthenticated}
+      />
       {isOwnProfile ? (
         <section className="profile-actions" aria-label="Profile account actions">
           <div>
@@ -78,7 +110,7 @@ export default async function ProfilePage({ params }: Props) {
                 key={post.id}
                 post={post}
                 activeReactions={activeReactions[post.id] ?? []}
-                isAuthenticated
+                isAuthenticated={isAuthenticated}
               />
             ))}
           </div>

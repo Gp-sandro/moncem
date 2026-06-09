@@ -2,12 +2,12 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { isUserEmailVerified } from '@/lib/auth';
 
+// NOTE: /feed, /p (dispatches) and /u (profiles) are intentionally public so
+// they are crawlable and unfurlable. Reading is open; writing/reacting/messaging
+// still gate at the component and API layer.
 const protectedPathPrefixes = [
   '/connect',
-  '/feed',
-  '/p',
   '/post',
-  '/u',
   '/settings',
   '/me',
   '/inbox',

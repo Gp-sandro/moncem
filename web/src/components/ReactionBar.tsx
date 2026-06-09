@@ -16,11 +16,15 @@ type ToggleReactionResult = {
 const reactionOptions: Array<{
   type: ReactionType;
   label: string;
+  tooltip?: string;
 }> = [
-  { type: 'sparked', label: 'Spark' },
   { type: 'validated', label: 'Validate' },
-  { type: 'inthis', label: 'In this' },
+  { type: 'inthis', label: 'Same boat', tooltip: "I'm dealing with this too" },
 ];
+
+// Reaction counts only carry signal once they are non-trivial; below this we
+// show the label alone so a "2" never reads as the whole story.
+const COUNT_VISIBILITY_THRESHOLD = 10;
 
 export function ReactionBar({
   postId,
@@ -98,6 +102,8 @@ export function ReactionBar({
       <div className="reaction-bar" aria-label="Post reactions">
         {reactionOptions.map((reaction) => {
           const active = activeSet.has(reaction.type);
+          const count = counts[reaction.type];
+          const showCount = count >= COUNT_VISIBILITY_THRESHOLD;
           return (
             <button
               key={reaction.type}
@@ -106,9 +112,10 @@ export function ReactionBar({
               aria-pressed={active}
               disabled={pendingType !== null}
               onClick={() => toggleReaction(reaction.type)}
+              title={reaction.tooltip}
             >
               <span className={`reaction-glyph ${reaction.type}`} aria-hidden="true" />
-              <strong>{counts[reaction.type]}</strong>
+              {showCount ? <strong>{count}</strong> : null}
               <em>{reaction.label}</em>
             </button>
           );

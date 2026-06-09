@@ -27,3 +27,10 @@ export function getSupabasePublicConfig(): {
 export function getSiteUrl(): string {
   return process.env.NEXT_PUBLIC_SITE_URL ?? 'https://moncem.space';
 }
+
+// Schools + Connect surfaces are parked until the beta reaches enough founders
+// to make them feel populated. Routes 404 while this is off; flip to "true" to
+// re-launch them. Default off.
+export function isSchoolsEnabled(): boolean {
+  return process.env.SCHOOLS_ENABLED === 'true';
+}

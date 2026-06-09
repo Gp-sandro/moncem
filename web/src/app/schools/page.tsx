@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { FieldCard } from '@/components/FieldCard';
 import { FounderRow } from '@/components/FounderRow';
 import { PostCard } from '@/components/PostCard';
@@ -7,6 +8,7 @@ import {
   getRecentPosts,
   getSchoolSummaries,
 } from '@/lib/data';
+import { isSchoolsEnabled } from '@/lib/env';
 import { getActiveReactions } from '@/lib/interactions';
 import { safeArray } from '@/lib/safe-data';
 import { createClient } from '@/lib/supabase/server';
@@ -19,6 +21,7 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function SchoolsPage() {
+  if (!isSchoolsEnabled()) notFound();
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const [schools, profiles, posts] = await Promise.all([

@@ -21,6 +21,14 @@ export const metadata: Metadata = {
     url: getSiteUrl(),
     siteName: 'Moncem',
     type: 'website',
+    images: ['/api/og'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Moncem - Student founder stories',
+    description:
+      'Stories, demos, ideas, and proof from student founders building before the world notices.',
+    images: ['/api/og'],
   },
   icons: {
     icon: [

@@ -235,6 +235,48 @@ export const getPostsByUsername = cache(async (username: string): Promise<Public
   return ((data ?? []) as PublicPostRow[]).map(mapPost);
 });
 
+// Real members for the Founders list (every public profile, newest first).
+export const getMembers = cache(async (limit = 60): Promise<PublicProfile[]> => {
+  const supabase = await getSupabase();
+  const { data, error } = await supabase
+    .from('public_profiles_web')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) throw new Error(`getMembers: ${error.message}`);
+  return ((data ?? []) as PublicProfileRow[]).map(mapProfile);
+});
+
+// Lightweight sources for the sitemap.
+export const getSitemapPosts = cache(async (): Promise<Array<{ slug: string; createdAt: string }>> => {
+  const supabase = await getSupabase();
+  const { data, error } = await supabase
+    .from('public_posts_web')
+    .select('slug, created_at')
+    .order('created_at', { ascending: false })
+    .limit(1000);
+
+  if (error) throw new Error(`getSitemapPosts: ${error.message}`);
+  return ((data ?? []) as Array<{ slug: string | null; created_at: string }>)
+    .filter((row): row is { slug: string; created_at: string } => Boolean(row.slug))
+    .map((row) => ({ slug: row.slug, createdAt: row.created_at }));
+});
+
+export const getSitemapProfiles = cache(async (): Promise<string[]> => {
+  const supabase = await getSupabase();
+  const { data, error } = await supabase
+    .from('public_profiles_web')
+    .select('username')
+    .not('username', 'is', null)
+    .limit(1000);
+
+  if (error) throw new Error(`getSitemapProfiles: ${error.message}`);
+  return ((data ?? []) as Array<{ username: string | null }>)
+    .map((row) => row.username)
+    .filter((username): username is string => Boolean(username));
+});
+
 export const getFeaturedProfiles = cache(async (limit = 6): Promise<PublicProfile[]> => {
   const supabase = await getSupabase();
   const { data, error } = await supabase

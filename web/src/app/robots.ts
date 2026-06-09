@@ -8,19 +8,19 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: '*',
-        allow: ['/', '/explore', '/schools', '/privacy', '/join', '/login', '/signup'],
+        // Public, unfurlable surfaces: the feed, dispatches, profiles, marketing.
+        allow: ['/', '/feed', '/explore', '/founders', '/p', '/u', '/privacy', '/join', '/login', '/signup'],
         disallow: [
-          '/feed',
-          '/connect',
           '/post',
-          '/p',
-          '/u',
           '/settings',
           '/inbox',
           '/notifications',
           '/sparked',
           '/me',
+          '/connect',
+          '/schools',
           '/admin',
+          '/api',
         ],
       },
     ],

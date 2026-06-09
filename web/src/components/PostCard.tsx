@@ -7,6 +7,7 @@ import {
   initialsFor,
   postTypeLabel,
   readingMinutes,
+  usableCoverUrl,
 } from '@/lib/format';
 import type { PublicPost } from '@/lib/types';
 import type { ReactionType } from '@/lib/types';
@@ -22,8 +23,6 @@ function postAccent(type: PublicPost['type']): string {
 
 function proofLine(post: PublicPost): string {
   if (post.milestone) return post.milestone;
-  if (post.sparkedCount > 0) return `${post.sparkedCount} sparks`;
-  if (post.validatedCount > 0) return `${post.validatedCount} validations`;
   if (post.tags[0]) return post.tags[0];
   return 'Building in public';
 }
@@ -46,20 +45,21 @@ export function PostCard({
     .filter(Boolean)
     .join(' / ');
   const excerpt = post.excerpt ?? post.body?.slice(0, 150) ?? 'A student founder story from the build.';
+  const coverUrl = usableCoverUrl(post.coverUrl);
 
   return (
     <article className={`post-card post-card-${variant} accent-${accent}`}>
       <Link href={`/p/${post.slug}`} className={`post-art post-art-link ${typeClass}`} aria-label={`Read ${post.title}`}>
-        {post.coverUrl ? (
+        {coverUrl ? (
           <Image
-            src={post.coverUrl}
+            src={coverUrl}
             alt=""
             fill
             sizes={variant === 'feature' ? '(max-width: 880px) 100vw, 56vw' : '(max-width: 880px) 100vw, 260px'}
           />
         ) : (
           <div className="proof-fallback" aria-hidden="true">
-            <span>{proofLine(post)}</span>
+            <span>{post.title}</span>
           </div>
         )}
         <span className="type-label">{postTypeLabel(post.type)}</span>

@@ -5,10 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const baseNavLinks = [
-  { href: '/feed', label: 'Feed' },
-  { href: '/explore', label: 'Explore' },
-  { href: '/schools', label: 'Schools' },
-  { href: '/connect', label: 'Connect' },
+  { href: '/feed', label: 'Read' },
+  { href: '/founders', label: 'Founders' },
 ];
 
 function isActive(pathname: string, href: string): boolean {
@@ -25,7 +23,7 @@ export function SiteHeader({
 }) {
   const pathname = usePathname();
   const actionHref = isAuthenticated ? '/post/new' : '/join?next=/post/new';
-  const actionLabel = isAuthenticated ? 'Post' : 'Join';
+  const actionLabel = isAuthenticated ? 'Write' : 'Join';
   const profileHref = profileUsername ? `/u/${profileUsername}` : '/feed';
   const navLinks = isAuthenticated
     ? [...baseNavLinks, { href: '/inbox', label: 'Inbox' }]
