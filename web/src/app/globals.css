@@ -380,12 +380,22 @@ a {
   line-height: 1.55;
 }
 
+/* Editorial masthead on paper — no colored band, no sticky rectangle. */
 .feed-compact-header {
-  position: sticky;
-  top: 72px;
-  z-index: 9;
-  border-bottom: 1px solid rgba(17, 22, 24, 0.08);
-  background: rgba(223, 230, 223, 0.86);
+  align-items: end;
+  padding: clamp(40px, 6vw, 76px) 0 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.feed-compact-header h1 {
+  font-size: clamp(52px, 8vw, 92px);
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+}
+
+.feed-compact-header p {
+  max-width: 48ch;
+  font-size: 15px;
 }
 
 .feed-hero-strip {
@@ -3565,6 +3575,7 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: 20px;
   margin-bottom: 6px;
 }
 
